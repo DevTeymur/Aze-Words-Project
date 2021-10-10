@@ -4,7 +4,8 @@ import os
 
 def GetFileNames():
     """This function returns csv files which in the same path. Return type list."""
-    all_files = os.listdir()
+    path = os.path.dirname(os.path.abspath(__file__))+'\Data'
+    all_files = os.listdir(path)
     csv_files = []
     for file in all_files:
         if file.endswith('.csv'):
