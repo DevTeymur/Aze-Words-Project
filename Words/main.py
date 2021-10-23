@@ -1,5 +1,28 @@
 import test_cases as tc
+import pandas as pd
+import os
+path = f'{os.path.abspath(os.path.join(os.path.dirname(__file__),".."))}/Web_scraping/all.csv'
 
+def GetData(path=path):
+    df=pd.read_csv(path)
+    df=df['Text']
+    return df
+
+print(GetData())
+
+def SymbolRemover():
+    pass
+
+def StopWordsRemover():
+    pass
+
+def LowFrequentRemover():
+    pass
+
+def Lemmatizer():
+    pass
+
+'''
 f = open("words.txt", "r",  encoding="utf8")
 words = f.readlines()
 
@@ -51,3 +74,4 @@ def check(test):
 
 
 check(tc.test5)
+'''
