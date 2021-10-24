@@ -13,3 +13,60 @@ test6="Bütün reallıqları nəzər alsaq Respublika möcüzə idi. Möcüzəni
 test7="Kim olursa olsun dövrü mütləq şəkildə aydınlanır. Bəlkə də zamanında 37 repressiyasına aparan yolu hazırlayanların, 20-ci ildə işğala şərait yaradanların bir gün dövranın dönəcəyi ağıllarına belə gəlməzdi. Hər dövr mütləq işıqlanır, yazılır, aydınlanır. O tarixi gün gəldiyində qəhrəman kimi yazılanlar, anılanlar hər zaman Xoyskilər, Cavidlər- mübarizə aparanlar olur. Çünki onlar hər zaman səmimi sevilib, sevilir və seviləcək. Onlara söylənən sözlər qorxudan, şirin görünmək üçün, mənfəət üçün olmur, olmayacaq."
 
 test8="Əmək müqaviləsi Azerbaycanin və ABŞ bildirişi” e-sistemində 12 mindən çox əcnəbi ilə müqavilə bildirişi qeydiyyatdadır zombi mənim hekayəmin əsas hissəsidir əməyin Bakıda doğum hadisəsi baş vermişdir. Sağ qalanlardan ikisi reanimasiya şöbəsinə qaldırılıb"
+
+
+
+
+'''
+f = open("words.txt", "r",  encoding="utf8")
+words = f.readlines()
+
+str1 = "".join(words)
+words = str1.split("\n")
+
+# moterze reqemler tire olkeler adlar seherler
+
+
+def empty(i):
+    if i != "" and i != "," and i != ":" and i != "\"":
+        return True
+    else:
+        return False
+ 
+
+def check(test):
+    l = []
+    vowels = ["a", "ı", "o", "u", "e", "ə", "i"]
+    test = test.split()
+    print(test)
+    for i in test:
+        if i.isupper() or (test.index(i) != 0 and i[0].isupper()):
+            # xüsusi isimlər və abbr. üçün
+            l.append(i)
+            print(i)
+        else:
+            for j in range(len(i), 0, -1):
+                if i[:j].casefold() in words:
+                    print(i[:j])
+                    # adi şəkilçilər üçün
+                    #l.append( "".join(   i[0:].split(i[:j]) )  )
+                    l.append(i[:j])
+                    break
+                elif i[j-1] in vowels and (i[j-2] == "y" or i[j-2] == "ğ"):
+                    # bitişdirici samitlər üçün
+                    if (i[:j-2]+"k").casefold() in words:
+                        print(i[:j-2]+"k")
+                        l.append(i[:j-2]+"k")
+                        break
+                    elif (i[:j-2]+"q").casefold() in words:
+                        print(i[:j-2]+"q")
+                        l.append(i[:j-2]+"q")
+                        break
+
+    # print(l)
+    # return set(filter(empty,l))
+    return l
+
+
+check(tc.test5)
+'''
