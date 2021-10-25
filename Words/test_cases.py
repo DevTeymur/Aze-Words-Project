@@ -1,3 +1,5 @@
+import pandas as pd
+
 test1="Biz Suriyaya, Əfqanıstana baxıb şükür edə bilmərik. Biz Azərbaycan sərhədlərindən kənarda Azərbaycan qurmuşuq. 100 il əvvəlki Azərbaycanı qoruya bilsək bugün nümunə göstərilən biz olardıq. Bizim Xoyskimiz, Topçubaşovumuz, Cavidimiz, Zərdabimiz və s. olub. Biz istifadə edə bilmədiyimiz potensialımıza heyifsilənməliyik. Finlandiya ola bilməyimizin qarşısında duran səriştəsizliyimizlə mübarizə aparmalıyıq."
 
 test2="Şəkil Napolidə yerləşən bir metro stansiyasından imiş. Biz hələ də kondisionerli qatar gözləyirik."
@@ -14,8 +16,14 @@ test7="Kim olursa olsun dövrü mütləq şəkildə aydınlanır. Bəlkə də za
 
 test8="Əmək müqaviləsi Azerbaycanin və ABŞ bildirişi” e-sistemində 12 mindən çox əcnəbi ilə müqavilə bildirişi qeydiyyatdadır zombi mənim hekayəmin əsas hissəsidir əməyin Bakıda doğum hadisəsi baş vermişdir. Sağ qalanlardan ikisi reanimasiya şöbəsinə qaldırılıb"
 
+string_list = [test1, test2, test3, test4, test5, test6, test7, test8]
 
-
+def AppendToDataframe(df, stirng_list=string_list):
+    for text in string_list:
+        d = {'Text': text}
+        df=df.append(d, ignore_index=True)
+        d={}
+    return df
 
 '''
 f = open("words.txt", "r",  encoding="utf8")
