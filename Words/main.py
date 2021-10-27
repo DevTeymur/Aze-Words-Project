@@ -1,4 +1,4 @@
-from test_cases import AppendToDataframe
+from test_cases import AppendToDataframe, string_list
 from file_reader import stopwords
 import pandas as pd
 import pickle as pkl
@@ -7,7 +7,7 @@ import re
 
 path = f'{os.path.abspath(os.path.join(os.path.dirname(__file__),".."))}/Web_scraping/all.csv'
 
-file = open(f'{os.path.abspath(os.path.join(os.path.dirname(__file__),".."))}/Words/vocabulary.pkl', "rb")
+file = open(f'{os.path.abspath(os.path.join(os.path.dirname(__file__),".."))}/Words/Files/vocabulary.pkl', "rb")
 vocabulary = pkl.load(file)
 file.close()
 
@@ -53,7 +53,7 @@ def EmojiRemover(df):
                                u"\u3030"
                                "]+", flags=re.UNICODE)
     for i in range(len(df['Text'])):
-        df.iloc[i,:].Text=emoji_pattern.sub(r'', df.iloc[i,:].Text)
+        df.iloc[i,:].Text=emoji_pattern.sub(r'', df.iloc[i,:].Text).strip('')
     return df
 
 def LowFrequentRemover(df):
@@ -76,14 +76,13 @@ def Lemmatizer():
 
 def Search(word, voc=vocabulary):
     first_letter=word[0]
-    if word in vocabulary[first_letter]:
+    if word in voc[first_letter]:
         return True
     else:
         return False 
 
-df=GetData().to_frame()
-df=AppendToDataframe(df)
-df=LowerPhrase(df)
+df=AppendToDataframe(GetData().to_frame())
+#df=LowerPhrase(df)
 df=StopWordsRemover(df)
 df=SymbolRemover(df)
 df=EmojiRemover(df)

@@ -3,7 +3,7 @@ import pickle as pkl
 path = f'{os.path.abspath(os.path.join(os.path.dirname(__file__),".."))}/Words'
 
 def stopwords(path=path):
-    file=open(f'{path}/stopwords.txt', 'r')
+    file=open(f'{path}/Files/stopwords.txt', 'r')
     stopwords_list=[]
     for line in file.readlines():
         stopwords_list.append(line.rstrip('\n').lstrip('\ufeff'))
