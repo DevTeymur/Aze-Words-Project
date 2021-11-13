@@ -99,7 +99,7 @@ def Lemmatizer(df, s=sorted(suffix_list, key=len)[::-1]):
     vowels = ["a", "ı", "o", "u", "e", "ə", "i"]
     for index, sentence in enumerate(df['Text']):
         sentence = sentence.split()
-        for word in sentence:        
+        for word in sentence:    
             copy=word
             run=True
             if Search(copy):
@@ -110,25 +110,26 @@ def Lemmatizer(df, s=sorted(suffix_list, key=len)[::-1]):
                         if copy.endswith(s[i]):
                             copy=copy[::-1].replace(s[i][::-1], "", 1)[::-1]
                             break
+                        elif copy.endswith(s[i]+'n') or copy.endswith(s[i]+'m') or copy.endswith(s[i]+'k') or copy.endswith(s[i]+'z'):
+                            if Search(copy[:-3]):
+                                copy=copy[:-3]
+                                run=False
                     if Search(copy):
                         run=False  
-                        break
+                    elif Search(copy[:-1]+'q'):
+                        copy=copy[:-1]+'q'
+                        run=False
+                    elif Search(copy[:-1]+'k'):
+                        copy=copy[:-1]+'k'
+                        run=False
                     else:
-                        break
+                        for i in range(len(word), 0, -1):
+                            if Search(word[:i]):
+                                sentence = [w.replace(word, word[:i]) for w in sentence]
+                                break
+                        run=False
             sentence = [w.replace(word, copy) for w in sentence]   
-            for i in range(len(word), 0, -1):
-                if Search(word[:i]):
-                    sentence = [w.replace(word, word[:i]) for w in sentence]
-                    break
-                elif word[i-1] in vowels and (word[i-2] == 'y' or word[i-2] == "ğ"):
-                    if Search(word[:i-2]+'k'):
-                        sentence = [w.replace(word, word[:i-2]+'k')
-                                    for w in sentence]
-                        break
-                    elif Search(word[:i-2]+'q'):
-                        sentence = [w.replace(word, word[:i-2]+'q')
-                                    for w in sentence]
-                        break
+            
         df['Text'][index] = " ".join(sentence)
     return df
 
@@ -136,13 +137,13 @@ def Lemmatizer(df, s=sorted(suffix_list, key=len)[::-1]):
 def CleanData(df):
     df = SpecialWordsFilter(df)
     df = LowerPhrase(df)
-    df = StopWordsRemover(df)
     df = SymbolRemover(df)
     df = EmojiRemover(df)
     df = LowFrequentRemover(df)
-    df = df[df.Text != '']
-    df = df.apply(lambda x: x.str.strip())
-    df['Text']=df['Text'].apply(lambda sentence: re.sub(' +', ' ', sentence))
-    df['Text']=df['Text'].apply(lambda sentence: " ".join([word for word in sentence.strip().split(" ") if len(word)!=1]))
+    df = StopWordsRemover(df)
+    df = df[df.Text != '']  # Empty lines
+    df = df.apply(lambda x: x.str.strip()) # Spaces in start and end
+    df['Text']=df['Text'].apply(lambda sentence: re.sub(' +', ' ', sentence)) # Multiple spaces between words
+    df['Text']=df['Text'].apply(lambda sentence: " ".join([word for word in sentence.strip().split(" ") if len(word)!=1])) #words with one letter
     return df
     

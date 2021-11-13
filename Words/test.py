@@ -1,5 +1,3 @@
-from functools import partial
-import re
 import pandas as pd
 import numpy as np
 from file_reader import suffixes
@@ -13,14 +11,15 @@ df=pd.DataFrame({'A': [1,2,3,4,5,6], 'B': [1,2,3,4,5,6], 'C': [1,2,3,4,5,6]})
 df.loc[len(df)]=np.nan
 df.loc[len(df)-1, 'B']='7'
 
-word='torpağı' 
-word1='kitablara'
-
+word1='torpağı' 
+word2='düşdün'
+word='kitablara'
+print(word1[:-3])
 
 a=word
 run=True
 if Search(a):
-    print('Yes')
+    print(word)
 else:
     while run:
         for i in range(len(s)):
@@ -29,12 +28,21 @@ else:
                 a=a[::-1].replace(s[i][::-1], "", 1)[::-1]
                 print(a)
                 break
+            elif a.endswith(s[i]+'n')or a.endswith(s[i]+'m') or a.endswith(s[i]+'k') or a.endswith(s[i]+'z'):
+                if Search(a[:-3]):
+                    a=a[:-3]
+                    run=False
             
         if Search(a):
             run=False
             break
         else:
-            break
+            if Search(a[:-1]+'q'):
+                a=a[:-1]+'q'
+                run=False
+            elif Search(a[:-1]+'k'):
+                a=a[:-1]+'k'
+                run=False
 
 print(word)
 print(a)
