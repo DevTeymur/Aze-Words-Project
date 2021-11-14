@@ -27,5 +27,5 @@ def MergeDataFrames(files_list):
 main = MergeDataFrames(GetFileNames(True))
 print(main.shape)
 
-main.to_csv('all.csv', index=False)
+main.to_csv(f'{os.path.dirname(os.path.abspath(__file__))}/all.csv', index=False)
 
