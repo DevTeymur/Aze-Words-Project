@@ -1,5 +1,7 @@
 import pandas as pd
 import os
+import numpy as np
+import datetime
 
 path = os.path.dirname(os.path.abspath(__file__))+'/Data'
 
@@ -23,9 +25,31 @@ def MergeDataFrames(files_list):
         main = pd.concat([main, df])
     return main
 
+def TxtToFrame(file_name, scname, url, show_data=False):
+    table={'Id': [], 'Screen_name': [], 'Created_at': [], 'Text': [], 'Url': [], 'Hastags': [], 'Symbols': []}
+    f= open(f'{path}/{file_name}.txt', 'r') 
+    for line in f:
+        if line.rstrip()!="":
+            table['Id'].append(np.nan)
+            table['Screen_name'].append(scname)
+            table['Created_at'].append(datetime.datetime.now())
+            table['Text'].append(line.rstrip())
+            table['Url'].append(url)
+            table['Hastags'].append(np.nan)
+            table['Symbols'].append(np.nan)
+    data=pd.DataFrame(table)
+    if show_data:
+        print(data.head(10))
+        print(data.shape)
+    return data
+    
+    
 
-main = MergeDataFrames(GetFileNames(True))
+main = MergeDataFrames(GetFileNames())
+main.append(TxtToFrame('data', 'oxu.az', 'oxu.az'))
+main = pd.concat([main, TxtToFrame('data', 'oxu.az', 'oxu.az')], ignore_index=True)
 print(main.shape)
 
 main.to_csv(f'{os.path.dirname(os.path.abspath(__file__))}/all.csv', index=False)
+
 

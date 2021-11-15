@@ -96,14 +96,13 @@ def Search(word, voc=vocabulary):
 
 
 def Lemmatizer(df, s=sorted(suffix_list, key=len)[::-1]):
-    vowels = ["a", "ı", "o", "u", "e", "ə", "i"]
     for index, sentence in enumerate(df['Text']):
         sentence = sentence.split()
-        for word in sentence:    
+        for word in sentence:  
             copy=word
             run=True
             if Search(copy):
-                sentence = [w.replace(word, copy) for w in sentence] 
+                continue 
             else:
                 while run:
                     for i in range(len(s)):
@@ -113,10 +112,8 @@ def Lemmatizer(df, s=sorted(suffix_list, key=len)[::-1]):
                         elif copy.endswith(s[i]+'n') or copy.endswith(s[i]+'m') or copy.endswith(s[i]+'k') or copy.endswith(s[i]+'z'):
                             if Search(copy[:-3]):
                                 copy=copy[:-3]
-                                run=False
-                    if Search(copy):
-                        run=False  
-                    elif Search(copy[:-1]+'q'):
+                                run=False 
+                    if Search(copy[:-1]+'q'):
                         copy=copy[:-1]+'q'
                         run=False
                     elif Search(copy[:-1]+'k'):

@@ -10,14 +10,11 @@ df=pd.DataFrame({'A': [1,2,3,4,5,6], 'B': [1,2,3,4,5,6], 'C': [1,2,3,4,5,6]})
 
 path = f'{os.path.abspath(os.path.join(os.path.dirname(__file__),".."))}/Web_scraping/Data'
 
-with open(f'{path}/data.txt', 'r') as f:
-    lines = [line.rstrip() for line in f if line.rstrip()!=""]
-print(lines)
 
-
+'''
 df.loc[len(df)]=np.nan
 df.loc[len(df)-1, 'B']='7'
-'''
+
 word1='torpağı' 
 word2='düşdün'
 word='kitablara'
