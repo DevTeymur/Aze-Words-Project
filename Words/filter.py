@@ -126,7 +126,6 @@ def Lemmatizer(df, s=sorted(suffix_list, key=len)[::-1]):
                                 break
                         run=False
             sentence = [w.replace(word, copy) for w in sentence]   
-            
         df['Text'][index] = " ".join(sentence)
     return df
 
