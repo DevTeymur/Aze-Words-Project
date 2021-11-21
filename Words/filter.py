@@ -1,4 +1,3 @@
-from test_cases import AppendToDataframe, string_list
 from file_reader import stopwords, suffixes
 import pandas as pd
 import pickle as pkl
@@ -16,12 +15,13 @@ suffix_list = suffixes()
 def GetData(path=path):
     df = pd.read_csv(path)
     df = df['Text']
+    df = df.dropna()
     return df
 
 
 def LowerPhrase(df):
     df['Text'] = df['Text'].apply(lambda sentence: ' '.join(
-        word.lower() for word in sentence.split()))
+       word.lower() for word in sentence.split()))
     return df
 
 
@@ -110,9 +110,12 @@ def Lemmatizer(df, s=sorted(suffix_list, key=len)[::-1]):
                             copy=copy[::-1].replace(s[i][::-1], "", 1)[::-1]
                             break
                         elif copy.endswith(s[i]+'n') or copy.endswith(s[i]+'m') or copy.endswith(s[i]+'k') or copy.endswith(s[i]+'z'):
-                            if Search(copy[:-3]):
-                                copy=copy[:-3]
-                                run=False 
+                            try:
+                                if Search(copy[:-3]):
+                                    copy=copy[:-3]
+                                    run=False 
+                            except:
+                                pass
                     if Search(copy[:-1]+'q'):
                         copy=copy[:-1]+'q'
                         run=False
@@ -131,7 +134,7 @@ def Lemmatizer(df, s=sorted(suffix_list, key=len)[::-1]):
 
 
 def CleanData(df):
-    df = SpecialWordsFilter(df)
+    #df = SpecialWordsFilter(df)
     df = LowerPhrase(df)
     df = SymbolRemover(df)
     df = EmojiRemover(df)
