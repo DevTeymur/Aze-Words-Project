@@ -16,9 +16,10 @@ test8="Əmək müqaviləsi Azerbaycanin və ABŞ bildirişi” e-sistemində 12 
 
 string_list = [test1, test2, test3, test4, test5, test6, test7, test8]
 
-def AppendToDataframe(df, stringlist=string_list):
+def appendToDataframe(df, stringlist=string_list):
     for text in stringlist:
         d = {'Text': text}
-        df=df.append(d, ignore_index=True)
+        # df=df.append(d, ignore_index=True)
+        df = df.concat([df, d], axis=0)
         d={}
     return df
