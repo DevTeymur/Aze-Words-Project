@@ -1,4 +1,4 @@
-from file_reader import stopwords, suffixes
+from file_reader import stopwords, suffixes, personNames
 import pandas as pd
 import pickle as pkl
 import os
@@ -20,9 +20,9 @@ def getData(path=path):
 
 
 def lowerPhrase(df):
-    # df['Text'] = df['Text'].apply(lambda sentence: ' '.join(
-    #    word.lower() for word in sentence.split()))
-    df['Text'] = df['Text'].str.lower()
+    df['Text'] = df['Text'].apply(lambda sentence: ' '.join(
+        word if word in personNames() else word.lower() for word in sentence.split()))
+    # df['Text'] = df['Text'].str.lower()
     return df
 
 
