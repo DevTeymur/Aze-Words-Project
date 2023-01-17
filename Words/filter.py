@@ -20,8 +20,9 @@ def getData(path=path):
 
 
 def lowerPhrase(df):
-    df['Text'] = df['Text'].apply(lambda sentence: ' '.join(
-       word.lower() for word in sentence.split()))
+    # df['Text'] = df['Text'].apply(lambda sentence: ' '.join(
+    #    word.lower() for word in sentence.split()))
+    df['Text'] = df['Text'].str.lower()
     return df
 
 

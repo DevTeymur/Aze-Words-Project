@@ -1,16 +1,22 @@
+# import pandas as pd
+# import numpy as np
+# from file_reader import suffixes
+# from filter import Search
+# import os
+
+# s=sorted(suffixes(), key=len)[::-1]
+
+# df=pd.DataFrame({'A': [1,2,3,4,5,6], 'B': [1,2,3,4,5,6], 'C': [1,2,3,4,5,6]})
+
+# path = f'{os.path.abspath(os.path.join(os.path.dirname(__file__),".."))}/Web_scraping/Data'
+
+d = {'Text': []}
+
+for i in range(10):
+    d['Text'].append(i)
+
 import pandas as pd
-import numpy as np
-from file_reader import suffixes
-from filter import Search
-import os
-
-s=sorted(suffixes(), key=len)[::-1]
-
-df=pd.DataFrame({'A': [1,2,3,4,5,6], 'B': [1,2,3,4,5,6], 'C': [1,2,3,4,5,6]})
-
-path = f'{os.path.abspath(os.path.join(os.path.dirname(__file__),".."))}/Web_scraping/Data'
-
-
+print(pd.DataFrame(data=d).head())
 '''
 df.loc[len(df)]=np.nan
 df.loc[len(df)-1, 'B']='7'
