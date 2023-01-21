@@ -1,4 +1,4 @@
-from file_reader import stopwords, suffixes
+from file_reader import stopwords, suffixes, personNames
 import pandas as pd
 import pickle as pkl
 import os
@@ -12,33 +12,34 @@ vocabulary = pkl.load(file)
 file.close()
 suffix_list = suffixes()
 
-def GetData(path=path):
+def getData(path=path):
     df = pd.read_csv(path)
     df = df['Text']
     df = df.dropna()
     return df
 
 
-def LowerPhrase(df):
+def lowerPhrase(df):
     df['Text'] = df['Text'].apply(lambda sentence: ' '.join(
-       word.lower() for word in sentence.split()))
+        word if word in personNames() else word.lower() for word in sentence.split()))
+    # df['Text'] = df['Text'].str.lower()
     return df
 
 
-def SymbolRemover(df):
+def symbolRemover(df):
     df['Text'] = df['Text'].apply(lambda sentence: ''.join(
         [word for word in sentence if word.isalnum() or word == ' ']))
     df['Text'] = df['Text'].str.replace('\d', '')
     return df
 
 
-def StopWordsRemover(df):
+def stopWordsRemover(df):
     df['Text'] = df['Text'].apply(lambda sentence: ' '.join([word for word in sentence.split() if word not in stopwords() and word.startswith('https') == False and
                                                              word.startswith('#') == False and word.startswith('@') == False]))
     return df
 
 
-def EmojiRemover(df):
+def emojiRemover(df):
     emoji_pattern = re.compile("["
                                u"\U0001F600-\U0001F64F"  # emoticons
                                u"\U0001F300-\U0001F5FF"  # symbols & pictographs
@@ -65,7 +66,7 @@ def EmojiRemover(df):
     return df
 
 
-def LowFrequentRemover(df):
+def lowFrequentRemover(df):
     if df.shape[0] > 10000:
         words = pd.Series((' '.join(df['Text'].values)).split(
         )).value_counts().sort_values(ascending=False).tail(1000)
@@ -76,16 +77,16 @@ def LowFrequentRemover(df):
     return df
 
 
-def SpellCheck():
+def spellCheck():
     pass
 
 
-def SpecialWordsFilter(df):
+def specialWordsFilter(df):
     df['Text']=df['Text'].apply(lambda sentence: " ".join([word for word in sentence.strip().split(" ") if word.isupper()==False]))
     return df
 
 
-def Search(word, voc=vocabulary):
+def search(word, voc=vocabulary):
     first_letter = word[0]
     if first_letter not in voc:
         return False
@@ -95,13 +96,13 @@ def Search(word, voc=vocabulary):
         return False
 
 
-def Lemmatizer(df, s=sorted(suffix_list, key=len)[::-1]):
+def lemmatizer(df, s=sorted(suffix_list, key=len)[::-1]):
     for index, sentence in enumerate(df['Text']):
         sentence = sentence.split()
         for word in sentence:  
             copy=word
             run=True
-            if Search(copy):
+            if search(copy):
                 continue 
             else:
                 while run:
@@ -111,20 +112,20 @@ def Lemmatizer(df, s=sorted(suffix_list, key=len)[::-1]):
                             break
                         elif copy.endswith(s[i]+'n') or copy.endswith(s[i]+'m') or copy.endswith(s[i]+'k') or copy.endswith(s[i]+'z'):
                             try:
-                                if Search(copy[:-3]):
+                                if search(copy[:-3]):
                                     copy=copy[:-3]
                                     run=False 
                             except:
                                 pass
-                    if Search(copy[:-1]+'q'):
+                    if search(copy[:-1]+'q'):
                         copy=copy[:-1]+'q'
                         run=False
-                    elif Search(copy[:-1]+'k'):
+                    elif search(copy[:-1]+'k'):
                         copy=copy[:-1]+'k'
                         run=False
                     else:
                         for i in range(len(word), 0, -1):
-                            if Search(word[:i]):
+                            if search(word[:i]):
                                 sentence = [w.replace(word, word[:i]) for w in sentence]
                                 break
                         run=False
@@ -133,13 +134,13 @@ def Lemmatizer(df, s=sorted(suffix_list, key=len)[::-1]):
     return df
 
 
-def CleanData(df):
+def cleanData(df):
     #df = SpecialWordsFilter(df)
-    df = LowerPhrase(df)
-    df = SymbolRemover(df)
-    df = EmojiRemover(df)
-    df = LowFrequentRemover(df)
-    df = StopWordsRemover(df)
+    df = lowerPhrase(df)
+    df = symbolRemover(df)
+    df = emojiRemover(df)
+    df = lowFrequentRemover(df)
+    df = stopWordsRemover(df)
     df = df[df.Text != '']  # Empty lines
     df = df.apply(lambda x: x.str.strip()) # Spaces in start and end
     df['Text']=df['Text'].apply(lambda sentence: re.sub(' +', ' ', sentence)) # Multiple spaces between words

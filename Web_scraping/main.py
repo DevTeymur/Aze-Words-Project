@@ -5,7 +5,7 @@ import datetime
 
 path = os.path.dirname(os.path.abspath(__file__))+'/Data'
 
-def GetFileNames(print_file_names=False):
+def getFileNames(print_file_names=False):
     """This function returns csv files which in the same path. Return type list."""
     all_files = os.listdir(path)
     csv_files = []
@@ -17,7 +17,7 @@ def GetFileNames(print_file_names=False):
     return csv_files
 
 
-def MergeDataFrames(files_list):
+def mergeDataFrames(files_list):
     """This function concats dataframes."""
     main = pd.read_csv(f'{path}/{files_list[0]}')
     for i in range(1, len(files_list)):
@@ -25,7 +25,7 @@ def MergeDataFrames(files_list):
         main = pd.concat([main, df])
     return main
 
-def TxtToFrame(file_name, scname, url, show_data=False):
+def txtToFrame(file_name, scname, url, show_data=False):
     table={'Id': [], 'Screen_name': [], 'Created_at': [], 'Text': [], 'Url': [], 'Hastags': [], 'Symbols': []}
     f= open(f'{path}/{file_name}.txt', 'r') 
     for line in f:
@@ -45,9 +45,8 @@ def TxtToFrame(file_name, scname, url, show_data=False):
     
     
 
-main = MergeDataFrames(GetFileNames())
-main.append(TxtToFrame('data', 'oxu.az', 'oxu.az'))
-main = pd.concat([main, TxtToFrame('data', 'oxu.az', 'oxu.az')], ignore_index=True)
+main = mergeDataFrames(getFileNames())
+main = pd.concat([main, txtToFrame('data', 'oxu.az', 'oxu.az')], ignore_index=True)
 print(main.shape)
 
 main.to_csv(f'{os.path.dirname(os.path.abspath(__file__))}/all.csv', index=False)

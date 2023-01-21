@@ -18,7 +18,7 @@ def suffixes(path=path):
     file.close()
     return suffix_list
 
-def ReturnVocabulary(path=path):
+def returnVocabulary(path=path):
     print('ReturnVocabulary call')
     file=open(f'{path}/words.txt', 'r')
     alphabet=['a', 'b', 'c', 'ç', 'd', 'e', 'ə', 'f', 'g', 'ğ', 'h', 'x', 'ı', 'i', 'j', 'k', 'q',
@@ -34,8 +34,20 @@ def ReturnVocabulary(path=path):
     file.close()
     return vocabulary_dict
 
+def personNames(path=path):
+    f = open(f'{path}/names_raw.txt','r')
+
+    valid_names = []
+    for line in f.readlines():
+        if len(line) >= 3:
+            valid_names.append(line.replace('\n', ''))
+
+    f.close()
+    return valid_names
+
+
 '''
-vocabulary=ReturnVocabulary()
+vocabulary=returnVocabulary()
 file=open(f"{path}/vocabulary.pkl","wb")
 pkl.dump(vocabulary, file)
 file.close()

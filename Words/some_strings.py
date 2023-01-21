@@ -1,3 +1,5 @@
+import pandas as pd
+
 test1="Biz Suriyaya, Əfqanıstana baxıb şükür edə bilmərik. Biz Azərbaycan sərhədlərindən kənarda Azərbaycan qurmuşuq. 100 il əvvəlki Azərbaycanı qoruya bilsək bugün nümunə göstərilən biz olardıq. Bizim Xoyskimiz, Topçubaşovumuz, Cavidimiz, Zərdabimiz və s. olub. Biz istifadə edə bilmədiyimiz potensialımıza heyifsilənməliyik. Finlandiya ola bilməyimizin qarşısında duran səriştəsizliyimizlə mübarizə aparmalıyıq."
 
 test2="Şəkil Napolidə yerləşən bir metro stansiyasından imiş. Biz hələ də kondisionerli qatar gözləyirik."
@@ -16,9 +18,10 @@ test8="Əmək müqaviləsi Azerbaycanin və ABŞ bildirişi” e-sistemində 12 
 
 string_list = [test1, test2, test3, test4, test5, test6, test7, test8]
 
-def AppendToDataframe(df, stringlist=string_list):
+def appendToDataframe(df, stringlist=string_list):
+    d = {'Text': []}
     for text in stringlist:
-        d = {'Text': text}
-        df=df.append(d, ignore_index=True)
-        d={}
+        d['Text'].append(text)
+        
+    df = pd.concat([df, pd.DataFrame(data=d)], axis=0)
     return df
