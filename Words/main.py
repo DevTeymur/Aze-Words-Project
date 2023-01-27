@@ -8,5 +8,5 @@ df = cleanData(df_all)
 
 df.to_csv(f'{os.path.abspath(os.path.join(os.path.dirname(__file__),".."))}/Words/result.csv', index=False)
 
-df= lemmatizer(df)
+df = lemmatizer(df)
 df.to_csv(f'{os.path.abspath(os.path.join(os.path.dirname(__file__),".."))}/Words/final.csv')

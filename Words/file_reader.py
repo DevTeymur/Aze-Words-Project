@@ -45,6 +45,21 @@ def personNames(path=path):
     f.close()
     return valid_names
 
+def personSurnames(path=path):
+    f = open(f'{path}/surnames_raw.txt','r')
+
+    valid_surnames_men = []
+    for line in f.readlines():
+        if len(line) >= 3:
+            valid_surnames_men.append(line.replace('\n', ''))
+
+    f.close()
+
+    valid_surnames_women = [element + 'a' for element in valid_surnames_men]
+
+    all_surnames = valid_surnames_men + valid_surnames_women
+    return all_surnames
+
 
 '''
 vocabulary=returnVocabulary()

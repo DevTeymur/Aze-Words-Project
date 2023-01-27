@@ -1,4 +1,4 @@
-from file_reader import stopwords, suffixes, personNames
+from file_reader import stopwords, suffixes, personNames, personSurnames
 import pandas as pd
 import pickle as pkl
 import os
@@ -21,7 +21,8 @@ def getData(path=path):
 
 def lowerPhrase(df):
     df['Text'] = df['Text'].apply(lambda sentence: ' '.join(
-        word if word in personNames() else word.lower() for word in sentence.split()))
+        word if word in personNames() + personSurnames() else word.lower() for word in sentence.split()))
+    
     # df['Text'] = df['Text'].str.lower()
     return df
 
@@ -134,16 +135,23 @@ def lemmatizer(df, s=sorted(suffix_list, key=len)[::-1]):
     return df
 
 
-def cleanData(df):
+def cleanData(df, info = True):
     #df = SpecialWordsFilter(df)
+    if info: print("Lowering the text...")
     df = lowerPhrase(df)
+    if info: print("Removing symbols...")
     df = symbolRemover(df)
+    if info: print("Removing emojies...")
     df = emojiRemover(df)
+    if info: print("Removing low frequent words...")
     df = lowFrequentRemover(df)
+    if info: print("Removing stop words...")
     df = stopWordsRemover(df)
+    if info: print("Running extra filters...")
     df = df[df.Text != '']  # Empty lines
     df = df.apply(lambda x: x.str.strip()) # Spaces in start and end
     df['Text']=df['Text'].apply(lambda sentence: re.sub(' +', ' ', sentence)) # Multiple spaces between words
     df['Text']=df['Text'].apply(lambda sentence: " ".join([word for word in sentence.strip().split(" ") if len(word)!=1])) #words with one letter
+    if info: print("Done!")
     return df
     
