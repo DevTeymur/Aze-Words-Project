@@ -20,23 +20,27 @@ def getData(path=path):
 
 
 def lowerPhrase(df):
+    person_names_surnames = personNames() + personSurnames()
     df['Text'] = df['Text'].apply(lambda sentence: ' '.join(
-        word if word in personNames() + personSurnames() else word.lower() for word in sentence.split()))
+        word if word in person_names_surnames else word.lower() for word in sentence.split()))
     
     # df['Text'] = df['Text'].str.lower()
     return df
 
 
 def symbolRemover(df):
-    df['Text'] = df['Text'].apply(lambda sentence: ''.join(
+    df['Text'] = df['Text'].apply(lambda sentence: '    '.join(
         [word for word in sentence if word.isalnum() or word == ' ']))
     df['Text'] = df['Text'].str.replace('\d', '')
     return df
 
 
 def stopWordsRemover(df):
-    df['Text'] = df['Text'].apply(lambda sentence: ' '.join([word for word in sentence.split() if word not in stopwords() and word.startswith('https') == False and
+    # df['Text'] = df['Text'].apply(lambda sentence: ' '.join([word for word in sentence.split() if word not in stopwords() and word.startswith('https') == False and
+    #                                                          word.startswith('#') == False and word.startswith('@') == False]))
+    df['Text'] = df['Text'].apply(lambda sentence: ' '.join([word for word in sentence.split() if word.startswith('https') == False and
                                                              word.startswith('#') == False and word.startswith('@') == False]))
+    
     return df
 
 
@@ -143,8 +147,8 @@ def cleanData(df, info = True):
     df = symbolRemover(df)
     if info: print("Removing emojies...")
     df = emojiRemover(df)
-    if info: print("Removing low frequent words...")
-    df = lowFrequentRemover(df)
+    # if info: print("Removing low frequent words...")
+    # df = lowFrequentRemover(df)
     if info: print("Removing stop words...")
     df = stopWordsRemover(df)
     if info: print("Running extra filters...")
