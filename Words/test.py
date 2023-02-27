@@ -10,13 +10,33 @@
 
 # path = f'{os.path.abspath(os.path.join(os.path.dirname(__file__),".."))}/Web_scraping/Data'
 
-d = {'Text': []}
+# d = {'Text': []}
 
-for i in range(10):
-    d['Text'].append(i)
+# for i in range(10):
+#     d['Text'].append(i)
 
-import pandas as pd
-print(pd.DataFrame(data=d).head())
+# import pandas as pd
+# print(pd.DataFrame(data=d).head())
+
+
+import os
+
+def personSurnames(path= f'{os.path.abspath(os.path.join(os.path.dirname(__file__),".."))}/Words/Files'):
+    f = open(f'{path}/surnames_raw.txt','r')
+
+    valid_surnames_men = []
+    for line in f.readlines():
+        if len(line) >= 3:
+            valid_surnames_men.append(line.replace('\n', ''))
+
+    f.close()
+
+    valid_surnames_women = [element + 'a' for element in valid_surnames_men]
+
+    all_surnames = valid_surnames_men + valid_surnames_women
+    return all_surnames
+
+print(personSurnames())
 '''
 df.loc[len(df)]=np.nan
 df.loc[len(df)-1, 'B']='7'

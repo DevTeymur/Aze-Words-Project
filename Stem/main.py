@@ -1,4 +1,11 @@
-import pandas as pd
+f=open("words.txt","r")
+words=f.readlines()
+str1="".join(words)
+words=str1.split("\n")
+
+#moterze reqemler tire olkeler adlar seherler
+test="Əmək müqaviləsi Azerbaycanin və ABŞ bildirişi” e-sistemində 12 mindən çox əcnəbi ilə müqavilə bildirişi qeydiyyatdadır zombi mənim hekayəmin əsas hissəsidir əməyin Bakıda doğum hadisəsi baş vermişdir. Sağ qalanlardan ikisi reanimasiya şöbəsinə qaldırılıb"
+
 
 test1="Biz Suriyaya, Əfqanıstana baxıb şükür edə bilmərik. Biz Azərbaycan sərhədlərindən kənarda Azərbaycan qurmuşuq. 100 il əvvəlki Azərbaycanı qoruya bilsək bugün nümunə göstərilən biz olardıq. Bizim Xoyskimiz, Topçubaşovumuz, Cavidimiz, Zərdabimiz və s. olub. Biz istifadə edə bilmədiyimiz potensialımıza heyifsilənməliyik. Finlandiya ola bilməyimizin qarşısında duran səriştəsizliyimizlə mübarizə aparmalıyıq."
 
@@ -13,15 +20,51 @@ test5="Yəqin ki, sümüklərinə belə rahatlıq vermədiyimiz, bu dünyadan yo
 test6="Bütün reallıqları nəzər alsaq Respublika möcüzə idi. Möcüzənin, inancın zəfərə dönüşməsi idi. O özəl insanlar əsarətə “dur” dedilər, o duyğunu, tükənməyən ümidi, həyəcanı bizlərə bəxş etdilər. Son nəfəsə qədər də ideallara sadiq qaldılar. Onlar fırtına quşu idi. Ən sərt fırtınada fırtınaya qarşı uçdular. Həm də qarşılıqsız və heç durmadan. Ruhları şad olsun, sülh içində yatsınlar."
 
 test7="Kim olursa olsun dövrü mütləq şəkildə aydınlanır. Bəlkə də zamanında 37 repressiyasına aparan yolu hazırlayanların, 20-ci ildə işğala şərait yaradanların bir gün dövranın dönəcəyi ağıllarına belə gəlməzdi. Hər dövr mütləq işıqlanır, yazılır, aydınlanır. O tarixi gün gəldiyində qəhrəman kimi yazılanlar, anılanlar hər zaman Xoyskilər, Cavidlər- mübarizə aparanlar olur. Çünki onlar hər zaman səmimi sevilib, sevilir və seviləcək. Onlara söylənən sözlər qorxudan, şirin görünmək üçün, mənfəət üçün olmur, olmayacaq."
+#n=input()
 
-test8="Əmək müqaviləsi Azerbaycanin və ABŞ bildirişi” e-sistemində 12 mindən çox əcnəbi ilə müqavilə bildirişi qeydiyyatdadır zombi mənim hekayəmin əsas hissəsidir əməyin Bakıda doğum hadisəsi baş vermişdir. Sağ qalanlardan ikisi reanimasiya şöbəsinə qaldırılıb"
+def empty(i): 
+    if i!="" and i!="," and i!=":" and i!="\"" : 
+      return True
+    else: 
+      return False
 
-string_list = [test1, test2, test3, test4, test5, test6, test7, test8]
+def check(test):
+  l=[]
+  vowels=["a","ı","o","u","e","ə","i"]
+  test=test.split()
+  #print(test)
+  for i in test:
+    if i.isupper() or (test.index(i)!=0 and i[0].isupper()):
+      # xüsusi isimlər və abbr. üçün
+      l.append(i)
+      # print(i)
+    else:
+      for j in range(len(i),0,-1):
+        if i[:j].casefold() in words:
+          # print(i[:j])
+          # adi şəkilçilər üçün
+          #l.append( "".join(   i[0:].split(i[:j]) )  )
+          l.append(i[:j])
+          break
+        elif i[j-1] in vowels and (i[j-2]=="y" or i[j-2]=="ğ") :
+          # bitişdirici samitlər üçün
+          if (i[:j-2]+"k").casefold() in words:
+            # print(i[:j-2]+"k")
+            l.append(i[:j-2]+"k")
+            break
+          elif (i[:j-2]+"q").casefold() in words:
+            # print(i[:j-2]+"q")
+            l.append(i[:j-2]+"q")
+            break
+          
 
-def appendToDataframe(df, stringlist=string_list):
-    d = {'Text': []}
-    for text in stringlist:
-        d['Text'].append(text)
-        
-    df = pd.concat([df, pd.DataFrame(data=d)], axis=0)
-    return df
+  #print(l)
+  #return set(filter(empty,l))
+  return ' '.join(l)
+
+l=check(test1)
+# print("#################################################")
+
+print(l)
+   
+      

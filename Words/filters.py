@@ -1,4 +1,4 @@
-from file_reader import stopwords, suffixes, personNames
+from file_reader import stopwords, suffixes, personNames, personSurnames
 import pandas as pd
 import pickle as pkl
 import os
@@ -20,26 +20,44 @@ def getData(path=path):
 
 
 def lowerPhrase(df):
+    """
+    Makes all letters lower case expect names and surnames
+    """
+    person_names_surnames = personNames() + personSurnames()
     df['Text'] = df['Text'].apply(lambda sentence: ' '.join(
-        word if word in personNames() else word.lower() for word in sentence.split()))
+        word if word in person_names_surnames else word.lower() for word in sentence.split()))
+    
     # df['Text'] = df['Text'].str.lower()
     return df
 
 
 def symbolRemover(df):
-    df['Text'] = df['Text'].apply(lambda sentence: ''.join(
+    """
+    Removes symbols from text
+    Problem here
+    """
+    df['Text'] = df['Text'].apply(lambda sentence: '    '.join(
         [word for word in sentence if word.isalnum() or word == ' ']))
     df['Text'] = df['Text'].str.replace('\d', '')
     return df
 
 
 def stopWordsRemover(df):
-    df['Text'] = df['Text'].apply(lambda sentence: ' '.join([word for word in sentence.split() if word not in stopwords() and word.startswith('https') == False and
+    """
+    Removes links, mentions, tags from the text
+    """
+    # df['Text'] = df['Text'].apply(lambda sentence: ' '.join([word for word in sentence.split() if word not in stopwords() and word.startswith('https') == False and
+    #                                                          word.startswith('#') == False and word.startswith('@') == False]))
+    df['Text'] = df['Text'].apply(lambda sentence: ' '.join([word for word in sentence.split() if word.startswith('http') == False and
                                                              word.startswith('#') == False and word.startswith('@') == False]))
+    
     return df
 
 
 def emojiRemover(df):
+    """
+    Removes emojies from the text
+    """
     emoji_pattern = re.compile("["
                                u"\U0001F600-\U0001F64F"  # emoticons
                                u"\U0001F300-\U0001F5FF"  # symbols & pictographs
@@ -67,6 +85,9 @@ def emojiRemover(df):
 
 
 def lowFrequentRemover(df):
+    """
+    Removes words with low frequency
+    """
     if df.shape[0] > 10000:
         words = pd.Series((' '.join(df['Text'].values)).split(
         )).value_counts().sort_values(ascending=False).tail(1000)
@@ -82,11 +103,17 @@ def spellCheck():
 
 
 def specialWordsFilter(df):
+    """
+    Removes special words
+    """
     df['Text']=df['Text'].apply(lambda sentence: " ".join([word for word in sentence.strip().split(" ") if word.isupper()==False]))
     return df
 
 
-def search(word, voc=vocabulary):
+def isInVocabulary(word, voc=vocabulary):
+    """
+    Searchs for word from dictonary based on first letter
+    """
     first_letter = word[0]
     if first_letter not in voc:
         return False
@@ -96,13 +123,16 @@ def search(word, voc=vocabulary):
         return False
 
 
-def lemmatizer(df, s=sorted(suffix_list, key=len)[::-1]):
+def stemmer_old(df, s=sorted(suffix_list, key=len)[::-1]):
+    """
+    Loops all dataframe and returns processed strings
+    """
     for index, sentence in enumerate(df['Text']):
         sentence = sentence.split()
         for word in sentence:  
             copy=word
             run=True
-            if search(copy):
+            if isInVocabulary(copy):
                 continue 
             else:
                 while run:
@@ -112,20 +142,20 @@ def lemmatizer(df, s=sorted(suffix_list, key=len)[::-1]):
                             break
                         elif copy.endswith(s[i]+'n') or copy.endswith(s[i]+'m') or copy.endswith(s[i]+'k') or copy.endswith(s[i]+'z'):
                             try:
-                                if search(copy[:-3]):
+                                if isInVocabulary(copy[:-3]):
                                     copy=copy[:-3]
                                     run=False 
                             except:
                                 pass
-                    if search(copy[:-1]+'q'):
+                    if isInVocabulary(copy[:-1]+'q'):
                         copy=copy[:-1]+'q'
                         run=False
-                    elif search(copy[:-1]+'k'):
+                    elif isInVocabulary(copy[:-1]+'k'):
                         copy=copy[:-1]+'k'
                         run=False
                     else:
                         for i in range(len(word), 0, -1):
-                            if search(word[:i]):
+                            if isInVocabulary(word[:i]):
                                 sentence = [w.replace(word, word[:i]) for w in sentence]
                                 break
                         run=False
@@ -134,16 +164,27 @@ def lemmatizer(df, s=sorted(suffix_list, key=len)[::-1]):
     return df
 
 
-def cleanData(df):
-    #df = SpecialWordsFilter(df)
-    df = lowerPhrase(df)
-    df = symbolRemover(df)
-    df = emojiRemover(df)
-    df = lowFrequentRemover(df)
-    df = stopWordsRemover(df)
-    df = df[df.Text != '']  # Empty lines
-    df = df.apply(lambda x: x.str.strip()) # Spaces in start and end
-    df['Text']=df['Text'].apply(lambda sentence: re.sub(' +', ' ', sentence)) # Multiple spaces between words
-    df['Text']=df['Text'].apply(lambda sentence: " ".join([word for word in sentence.strip().split(" ") if len(word)!=1])) #words with one letter
-    return df
-    
+
+def stem(string):
+    l=[]
+    vowels=["a","ı","o","u","e","ə","i"]
+    string=string.split()
+    for i in string:
+        if i.isupper() or (string.index(i)!=0 and i[0].isupper()):
+            # xüsusi isimlər və abbr. üçün
+            l.append(i)
+        else:
+            for j in range(len(i),0,-1):
+                if isInVocabulary(i[:j].casefold()): # i[:j].casefold() in words:
+                    # adi şəkilçilər üçün
+                    l.append(i[:j])
+                    break
+                elif i[j-1] in vowels and (i[j-2]=="y" or i[j-2]=="ğ") :
+                    # bitişdirici samitlər üçün
+                    if isInVocabulary((i[:j-2]+"k").casefold()): # (i[:j-2]+"k").casefold() in words:
+                        l.append(i[:j-2]+"k")
+                        break
+                    elif isInVocabulary((i[:j-2]+"q").casefold()): # (i[:j-2]+"q").casefold() in words:
+                        l.append(i[:j-2]+"q")
+                        break
+    return ' '.join(l)
